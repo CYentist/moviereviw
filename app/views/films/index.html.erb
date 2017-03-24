@@ -1,1 +1,29 @@
-<h2>Hello World!</h2>
+<div class="col-md-12">
+  <div class="film">
+    <%= link_to("New movie", new_film_path, class: "btn btn-primary pull-right") %>
+  </div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <td>#</td>
+        <td>电影名</td>
+        <td>简介</td>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @films.each do |film| %>
+        <tr>
+          <td>#</td>
+          <td><%= link_to(film.title, film_path(film)) %></td>
+          <td><%= film.description %></td>
+          <td>
+              <%= link_to("Edit", edit_film_path(film), class: "btn btn-sm btn-default")%>
+              <%= link_to("Delete", film_path(film),    class: "btn btn-sm btn-default",
+                          method: :delete, data: { confirm: "Are you sure?" } )%>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
