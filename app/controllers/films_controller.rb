@@ -18,9 +18,10 @@ before_action :authenticate_user! , only: [:new, :create, :edit, :destroy, :upda
     @film = Film.new(film_params)
     @film.user = current_user
     if @film.save
+      current_user.faver!(@film)
       redirect_to films_path
     else
-      new
+      render :new
     end
   end
 
@@ -41,6 +42,33 @@ before_action :authenticate_user! , only: [:new, :create, :edit, :destroy, :upda
     @film = Film.find(params[:id])
     @film.destroy
     redirect_to films_path, alert:"删除成功"
+  end
+
+  def favor
+    @film = Film.find(params[:id])
+
+    if !current_user.is_favored?(@film)
+      current_user.favor!(@film)
+      flash[:notice] = "收藏成功!"
+    else
+      flash[:warning] = "你已经收藏了！"
+    end
+
+    redirect_to film_path(@film)
+  end
+
+  def dislike
+    @film = Film.find(params[:id])
+
+    if current_user.is_favored?(@film)
+      current_user.dislike!(@film)
+      flash[:alert] = "已经取消收藏！"
+    else
+      flash[:warning] = "你还没有收藏！"
+    end
+
+    redirect_to film_path(@film)
+
   end
 
   private
