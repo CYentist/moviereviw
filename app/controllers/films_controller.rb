@@ -1,5 +1,6 @@
 class FilmsController < ApplicationController
 before_action :authenticate_user! , only: [:new, :create, :edit, :destroy, :update]
+before_action :find_film_and_check_permission, only: [:edit, :update, :destroy]
 
   def index
     @films = Film.all
@@ -18,7 +19,7 @@ before_action :authenticate_user! , only: [:new, :create, :edit, :destroy, :upda
     @film = Film.new(film_params)
     @film.user = current_user
     if @film.save
-      current_user.faver!(@film)
+      current_user.favor!(@film)
       redirect_to films_path
     else
       render :new
@@ -26,11 +27,9 @@ before_action :authenticate_user! , only: [:new, :create, :edit, :destroy, :upda
   end
 
   def edit
-    @film = Film.find(params[:id])
   end
 
   def update
-    @film = Film.find(params[:id])
     if @film.update(film_params)
       redirect_to films_path, notice:"更新成功"
     else
@@ -39,7 +38,6 @@ before_action :authenticate_user! , only: [:new, :create, :edit, :destroy, :upda
    end
 
   def destroy
-    @film = Film.find(params[:id])
     @film.destroy
     redirect_to films_path, alert:"删除成功"
   end
@@ -72,6 +70,13 @@ before_action :authenticate_user! , only: [:new, :create, :edit, :destroy, :upda
   end
 
   private
+
+  def find_film_and_check_permission
+    @film = Film.find(params[:id])
+    if current_user != @film.user
+      redirect_to root_path, alert: "You have no permission."
+    end
+  end
 
   def film_params
     params.require(:film).permit(:title, :description)

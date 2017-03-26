@@ -1,16 +1,19 @@
 <div class="col-md-12">
   <div class="film">
-    <%= link_to("Write a Review", new_film_review_path(@film), class: "btn btn-default pull-right")%>
-    <%= link_to("Edit", edit_film_path(@film), class: "btn btn-primary pull-right")%>
+    <% if current_user && current_user == @film.user %>
+      <%= link_to("Edit", edit_film_path(@film), class: "btn btn-primary pull-right")%>
+    <% end %>
   </div>
   <span class="pull-right">
   <% if current_user && current_user.is_favored?(@film) %>
     <label class="label label-success"> 已收藏 </label>
     <%= link_to("取消收藏", dislike_film_path(@film), method: :post, class: "btn btn-default") %>
+    <%= link_to("写点评", new_film_review_path(@film), class: "btn btn-default pull-right")%>
   <% else %>
     <label class="label label-warning"> 收藏后评论 </label>
     <%= link_to("收藏",  favor_film_path(@film), method: :post, class: "btn btn-default") %>
   <% end %>
+
 </span>
   <h2><%= @film.title %></h2>
   <p><%= @film.description %></p>
