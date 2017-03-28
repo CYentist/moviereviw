@@ -8,7 +8,7 @@ before_action :find_film_and_check_permission, only: [:edit, :update, :destroy]
 
   def show
     @film = Film.find(params[:id])
-    @reviews = @film.reviews
+    @reviews = @film.reviews.recent.paginate(:page => params[:page], :per_page => 5)
   end
 
   def new
